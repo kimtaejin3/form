@@ -1,69 +1,32 @@
-import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
+import useForm from "./useForm";
 
 const LoginForm1 = () => {
-  const [values, setValues] = useState({
-    email: "",
-    password: "",
-  });
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+    useForm<{ email: string; password: string }>({
+      initialValues: {
+        email: "",
+        password: "",
+      },
+      validate: (values: { email: string; password: string }) => {
+        const errors = {
+          email: "",
+          password: "",
+        };
+        if (!values.email) {
+          errors.email = "이메일을 입력해주세요";
+        }
 
-  const [errors, setErrors] = useState({
-    email: "",
-    password: "",
-  });
+        if (!values.password) {
+          errors.password = "비밀번호를 입력해주세요";
+        }
 
-  const [touched, setTouched] = useState({
-    email: false,
-    password: false,
-  });
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    setTouched({
-      ...touched,
-      [e.target.name]: true,
+        return errors;
+      },
+      onSubmit: (values: { email: string; password: string }) => {
+        alert(JSON.stringify(values, null, 2));
+      },
     });
-  };
-
-  const validate = useCallback(() => {
-    const errors = {
-      email: "",
-      password: "",
-    };
-
-    if (!values.email) {
-      errors.email = "이메일을 입력해주세요";
-    }
-
-    if (!values.password) {
-      errors.password = "비밀번호를 입력해주세요";
-    }
-
-    return errors;
-  }, [values]);
-
-  useEffect(() => {
-    const errors = validate();
-    setErrors(errors);
-  }, [validate]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setTouched({
-      email: true,
-      password: true,
-    });
-    const errors = validate();
-    setErrors(errors);
-    if (Object.values(errors).some((error) => error !== "")) return;
-    alert(JSON.stringify(values, null, 2));
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({
-      ...values,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   return (
     <Form onSubmit={handleSubmit}>
