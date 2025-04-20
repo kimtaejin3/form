@@ -2,57 +2,45 @@ import styled from "styled-components";
 import useForm from "./useForm";
 
 const LoginForm1 = () => {
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useForm<{ email: string; password: string }>({
-      initialValues: {
+  const { getFieldProps, handleSubmit, errors } = useForm<{
+    email: string;
+    password: string;
+  }>({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validate: (values: { email: string; password: string }) => {
+      const errors = {
         email: "",
         password: "",
-      },
-      validate: (values: { email: string; password: string }) => {
-        const errors = {
-          email: "",
-          password: "",
-        };
-        if (!values.email) {
-          errors.email = "이메일을 입력해주세요";
-        }
+      };
+      if (!values.email) {
+        errors.email = "이메일을 입력해주세요";
+      }
 
-        if (!values.password) {
-          errors.password = "비밀번호를 입력해주세요";
-        }
+      if (!values.password) {
+        errors.password = "비밀번호를 입력해주세요";
+      }
 
-        return errors;
-      },
-      onSubmit: (values: { email: string; password: string }) => {
-        alert(JSON.stringify(values, null, 2));
-      },
-    });
+      return errors;
+    },
+    onSubmit: (values: { email: string; password: string }) => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
 
   return (
     <Form onSubmit={handleSubmit}>
       <Field>
         <Label htmlFor="email">이메일</Label>
-        <Input
-          type="text"
-          name="email"
-          onChange={handleChange}
-          value={values.email}
-          onBlur={handleBlur}
-        />
-        {touched.email && errors.email && <Error>{errors.email}</Error>}
+        <Input type="text" {...getFieldProps("email")} />
+        {errors.email && <Error>{errors.email}</Error>}
       </Field>
       <Field>
         <Label htmlFor="password">비밀번호</Label>
-        <Input
-          type="password"
-          name="password"
-          onChange={handleChange}
-          value={values.password}
-          onBlur={handleBlur}
-        />
-        {touched.password && errors.password && (
-          <Error>{errors.password}</Error>
-        )}
+        <Input type="password" {...getFieldProps("password")} />
+        {errors.password && <Error>{errors.password}</Error>}
       </Field>
       <Button type="submit">로그인</Button>
     </Form>

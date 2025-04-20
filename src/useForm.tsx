@@ -50,6 +50,19 @@ const useForm = <T extends { [key: string]: string }>({
     setErrors(errors);
   }, [values, validate]);
 
+  const getFieldProps = (name: string) => {
+    const value = values[name];
+    const onBlur = handleBlur;
+    const onChange = handleChange;
+
+    return {
+      name,
+      value,
+      onBlur,
+      onChange,
+    };
+  };
+
   return {
     values,
     errors,
@@ -57,6 +70,7 @@ const useForm = <T extends { [key: string]: string }>({
     handleBlur,
     handleChange,
     handleSubmit,
+    getFieldProps,
   };
 };
 
