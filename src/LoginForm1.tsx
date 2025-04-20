@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
 const LoginForm1 = () => {
@@ -12,7 +12,19 @@ const LoginForm1 = () => {
     password: "",
   });
 
-  const validate = () => {
+  const [touched, setTouched] = useState({
+    email: false,
+    password: false,
+  });
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setTouched({
+      ...touched,
+      [e.target.name]: true,
+    });
+  };
+
+  const validate = useCallback(() => {
     const errors = {
       email: "",
       password: "",
@@ -27,10 +39,19 @@ const LoginForm1 = () => {
     }
 
     return errors;
-  };
+  }, [values]);
+
+  useEffect(() => {
+    const errors = validate();
+    setErrors(errors);
+  }, [validate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched({
+      email: true,
+      password: true,
+    });
     const errors = validate();
     setErrors(errors);
     if (Object.values(errors).some((error) => error !== "")) return;
@@ -53,8 +74,9 @@ const LoginForm1 = () => {
           name="email"
           onChange={handleChange}
           value={values.email}
+          onBlur={handleBlur}
         />
-        {errors.email && <Error>{errors.email}</Error>}
+        {touched.email && errors.email && <Error>{errors.email}</Error>}
       </Field>
       <Field>
         <Label htmlFor="password">비밀번호</Label>
@@ -63,8 +85,11 @@ const LoginForm1 = () => {
           name="password"
           onChange={handleChange}
           value={values.password}
+          onBlur={handleBlur}
         />
-        {errors.password && <Error>{errors.password}</Error>}
+        {touched.password && errors.password && (
+          <Error>{errors.password}</Error>
+        )}
       </Field>
       <Button type="submit">로그인</Button>
     </Form>
